@@ -5,25 +5,35 @@ import pickle
 
 FILENAME = 'tuning.pickle'
 
-with open(FILENAME, 'rb') as f:
-    data = pickle.load(f)
-
-    neuron1avg = np.mean(data['neuron1'],axis=0)
-    neuron2avg = np.mean(data['neuron2'],axis=0)
-    neuron3avg = np.mean(data['neuron3'],axis=0)
-    neuron4avg = np.mean(data['neuron4'],axis=0)
+def plot_tuning_curves(data):
     stim = data['stim']
 
-    plt.subplot(2,2,1)
-    plt.plot(stim, neuron1avg)
+    for i in range(4):
+        idx = i + 1
 
-    plt.subplot(2,2,2)
-    plt.plot(stim, neuron2avg)
+        neuron_avg = np.mean(data['neuron%s' % str(idx)],axis=0)
 
-    plt.subplot(2,2,3)
-    plt.plot(stim, neuron3avg)
-
-    plt.subplot(2,2,4)
-    plt.plot(stim, neuron4avg)
+        plt.subplot(2,2,idx)
+        plt.plot(stim, neuron_avg)
 
     plt.show()
+
+def non_poisson(data):
+    for i in range(4):
+        idx = i + 1
+
+        neuron_avg = np.mean(data['neuron%s' % str(idx)],axis=0)
+        neuron_std = np.std(data['neuron%s' % str(idx)],axis=0)
+
+        plt.subplot(2,2,idx)
+        plt.plot(neuron_std**2, neuron_avg)
+    plt.show()
+
+def main():
+    with open(FILENAME, 'rb') as f:
+        data = pickle.load(f)
+        plot_tuning_curves(data)
+        non_poisson(data)
+
+if __name__ == '__main__':
+    main()
